@@ -1,0 +1,325 @@
+/************************************************************
+  💡 Progressive Enhancements (append to end of basic.css)
+  - Fluid type & spacing via CSS custom properties
+  - Mobile-first responsive layout fixes
+  - Better touch targets & focus states (a11y)
+  - Dark mode + reduced motion friendly
+  - Modern fallbacks kept; no selector renames
+************************************************************/
+
+/* ---------- Design tokens (safe overrides) ---------- */
+:root {
+  --ds-bg: #f7f7fa;
+  --ds-bg-elev: #ffffff;
+  --ds-text: #283243;
+  --ds-text-muted: #555;
+  --ds-brand: #008cba;
+  --ds-accent: #f15a24;
+  --ds-border: #e5e7eb;
+  --ds-radius: 8px;
+
+  /* Fluid type: scales between 15px and 17px based on viewport */
+  --ds-fz: clamp(15px, 1.1vw + 12px, 17px);
+
+  /* Fluid vertical rhythm */
+  --ds-space-1: clamp(6px, 0.4vw + 4px, 10px);
+  --ds-space-2: clamp(10px, 0.8vw + 6px, 16px);
+  --ds-space-3: clamp(14px, 1.2vw + 8px, 22px);
+  --ds-space-4: clamp(18px, 1.6vw + 10px, 28px);
+}
+
+/* Use system color-scheme for built-in UI parts (inputs, scrollbars) */
+:root { color-scheme: light dark; }
+
+/* Honor "reduced motion" preference everywhere */
+@media (prefers-reduced-motion: reduce) {
+  .digiseller-body *, .digiseller-reveal-modal *, .digiseller-row * {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Base legibility ---------- */
+body .digiseller-body {
+  font-size: var(--ds-fz);
+  line-height: 1.55;
+  background: var(--ds-bg);
+  color: var(--ds-text);
+}
+
+/* Always allow images to shrink nicely on narrow screens */
+.digiseller-body img,
+.digiseller-body picture,
+.digiseller-body video,
+.digiseller-body iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Improve keyboard visibility without disturbing your palette */
+.digiseller-body a,
+.digiseller-body button,
+.digiseller-body [tabindex]:not([tabindex="-1"]) {
+  outline: none;
+}
+.digiseller-body a:focus-visible,
+.digiseller-body button:focus-visible,
+.digiseller-body [tabindex]:not([tabindex="-1"]):focus-visible {
+  box-shadow: 0 0 0 3px rgba(0,140,186,.3);
+  border-radius: 6px;
+}
+
+/* Bigger touch targets on phones */
+@media (pointer: coarse) {
+  .digiseller-body a,
+  .digiseller-body button,
+  .digiseller-body .digiseller-description-buyButton a,
+  .digiseller-body .digiseller-description-buyButton-spisok,
+  .digiseller-reveal-modal .digiseller-description-buyButton-spisok-oplata {
+    min-height: 44px;           /* Apple HIG / Material min target */
+    padding-block: 10px;
+  }
+}
+
+/* ---------- Header & top bar ---------- */
+.digiseller-body header.digiseller-row {
+  padding-block: var(--ds-space-3);
+  background: var(--ds-bg-elev);
+  border-bottom: 1px solid var(--ds-border);
+}
+
+/* Logo: shrink more gracefully on small devices */
+.digiseller-body header .digiseller-logo {
+  width: 26%;
+}
+@media (max-width: 1024px) {
+  .digiseller-body header .digiseller-logo { width: 32%; }
+}
+@media (max-width: 768px) {
+  .digiseller-body header .digiseller-logo { width: 44%; }
+}
+@media (max-width: 480px) {
+  .digiseller-body header .digiseller-logo { width: 56%; }
+}
+.digiseller-body header .digiseller-logo img { max-height: 64px; }
+
+/* Cart/flag buttons row: allow wrapping instead of overflow */
+.digiseller-body header .digiseller-basket-box,
+.digiseller-body .digiseller-row button.digiseller-flag-en,
+.digiseller-body .digiseller-row button.digiseller-flag-ru {
+  margin-top: var(--ds-space-2);
+}
+@media (max-width: 640px) {
+  .digiseller-body header .digiseller-basket-box { margin-left: var(--ds-space-1); }
+}
+
+/* ---------- Product + right column layout ---------- */
+/* Your CSS uses floats; this adds a flex fallback without breaking floats */
+.digiseller-body main .digiseller-row.digiseller-product-row-g,
+.digiseller-body .digiseller-row .digiseller-prockrutka-wrapper,
+.digiseller-body .digiseller-row .digiseller-calc {
+  gap: var(--ds-space-3);
+}
+
+@media (min-width: 1025px) {
+  /* Desktop: keep current proportions but add nicer spacing */
+  .digiseller-body main .digiseller-product { width: 57%; }
+  .digiseller-body .digiseller-prockrutka-wrapper { width: 57%; }
+}
+
+@media (max-width: 1024px) {
+  /* Tablet: stack image/gallery above buy box */
+  .digiseller-body main .digiseller-product,
+  .digiseller-body .digiseller-prockrutka-wrapper,
+  .digiseller-body .digiseller-product-buy,
+  .digiseller-body .digiseller-row .digiseller-calc,
+  .digiseller-body .digiseller-row .digiseller-calc-show-for-small {
+    width: 100% !important;
+    float: none !important;
+  }
+  .digiseller-body .digiseller-product { height: auto; }
+}
+
+/* Make product card padding & radius feel modern */
+.digiseller-body main .digiseller-product,
+.digiseller-body .digiseller-product-buy,
+.digiseller-body .digiseller-wrapper-product,
+.digiseller-body main section.digiseller-description > div {
+  border-radius: var(--ds-radius);
+  padding: var(--ds-space-3);
+  border-color: var(--ds-border);
+}
+
+/* Category / list tiles: responsive grid with existing markup */
+.digiseller-body .digiseller-category-row .digiseller-large-3,
+.digiseller-body .digiseller-category-row .digiseller-large-4,
+.digiseller-body .digiseller-category-row .digiseller-large-6 {
+  /* When the old grid collapses, ensure full width + spacing */
+  width: 100%;
+  padding-inline: var(--ds-space-1);
+  margin-bottom: var(--ds-space-3);
+}
+@media (min-width: 480px) {
+  .digiseller-body .digiseller-category-row .digiseller-large-3,
+  .digiseller-body .digiseller-category-row .digiseller-large-4 {
+    width: 50%;
+  }
+}
+@media (min-width: 900px) {
+  .digiseller-body .digiseller-category-row .digiseller-large-3 { width: 33.3333%; }
+  .digiseller-body .digiseller-category-row .digiseller-large-4 { width: 33.3333%; }
+  .digiseller-body .digiseller-category-row .digiseller-large-6 { width: 50%; }
+}
+
+/* Price & CTA block alignment on narrow screens */
+@media (max-width: 640px) {
+  .digiseller-wrapper-product .digiseller-description-price,
+  .digiseller-wrapper-product .digiseller-description-buyButton,
+  .digiseller-wrapper-product .digiseller-description-buyButton a {
+    position: static !important;
+    float: none !important;
+    display: block;
+    width: 100%;
+    margin-top: var(--ds-space-2);
+    text-align: left;
+  }
+}
+
+/* ---------- Tables & pagination on mobile ---------- */
+@media (max-width: 768px) {
+  .digiseller-body .digiseller-table-wrapper table,
+  .digiseller-body .digiseller-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .digiseller-body ul.digiseller-pagination li a,
+  .digiseller-body ul.digiseller-pagination li button {
+    padding: 10px 12px;
+  }
+}
+
+/* ---------- Forms & selects ---------- */
+.digiseller-pricing-table .digiseller-bullet-item select,
+.digiseller-reveal-modal .digiseller-bag-table input[type=number] {
+  border-radius: 6px;
+  border-color: #b8b8b8;
+}
+.digiseller-body input[type="text"],
+.digiseller-body input[type="number"],
+.digiseller-body input[type="email"],
+.digiseller-body select,
+.digiseller-body textarea {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ---------- Buttons ---------- */
+.digiseller-body .digiseller-row .digiseller-cta-button-v a,
+.digiseller-wrapper-product .digiseller-description-buyButton a,
+.digiseller-body .digiseller-wrapper-img .digiseller-description-buyButton-spisok,
+.digiseller-reveal-modal .digiseller-description-buyButton-spisok-oplata {
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  transition: transform .06s ease-out, background-color .2s ease-out, box-shadow .2s ease-out;
+}
+.digiseller-body .digiseller-row .digiseller-cta-button-v a:hover,
+.digiseller-wrapper-product .digiseller-description-buyButton a:hover,
+.digiseller-body .digiseller-wrapper-img .digiseller-description-buyButton-spisok:hover,
+.digiseller-reveal-modal .digiseller-description-buyButton-spisok-oplata:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+/* ---------- Breadcrumb & carousel arrows: larger hit area on mobile ---------- */
+@media (max-width: 640px) {
+  .digiseller-body .digiseller-breadcrumbs .digiseller-prev,
+  .digiseller-body .digiseller-breadcrumbs .digiseller-next,
+  .digiseller-body .digiseller-arrow-wrapper .digiseller-prev,
+  .digiseller-body .digiseller-arrow-wrapper .digiseller-next {
+    width: 52px;
+  }
+}
+
+/* ---------- Footer nav: wrap nicely on small screens ---------- */
+.digiseller-body footer.digiseller-row .digiseller-nav-exp>li {
+  min-width: auto;
+  padding-inline: var(--ds-space-1);
+}
+@media (max-width: 640px) {
+  .digiseller-body footer.digiseller-row .digiseller-nav-exp>li {
+    display: inline-flex;
+    margin-bottom: var(--ds-space-1);
+  }
+}
+
+/* ---------- Search/filters area: tighter & scroll-safe ---------- */
+.digiseller-body .digiseller-options {
+  margin-block: var(--ds-space-3);
+  padding-inline: var(--ds-space-2) !important;
+  padding-block: var(--ds-space-2) !important;
+  border-radius: var(--ds-radius);
+  border: 1px solid var(--ds-border);
+}
+@media (max-width: 768px) {
+  .digiseller-body .digiseller-options-filter .digiseller_filter_view {
+    position: static;
+    padding-right: 0;
+    margin-top: var(--ds-space-1);
+  }
+}
+
+/* ---------- Dark mode (automatic if user prefers dark) ---------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ds-bg: #0b0e13;
+    --ds-bg-elev: #121722;
+    --ds-text: #e8eef7;
+    --ds-text-muted: #b6c2cf;
+    --ds-border: #243042;
+  }
+  body .digiseller-body { background: var(--ds-bg); color: var(--ds-text); }
+  .digiseller-body header.digiseller-row,
+  .digiseller-body footer.digiseller-row,
+  .digiseller-body .digiseller-product,
+  .digiseller-body .digiseller-product-buy,
+  .digiseller-body main section.digiseller-description > div,
+  .digiseller-body .digiseller-wrapper-product,
+  .digiseller-body .digiseller-options {
+    background: var(--ds-bg-elev);
+    border-color: var(--ds-border);
+  }
+  .digiseller-body a { color: var(--ds-brand); }
+  .digiseller-table-head,
+  .digiseller-reveal-bag .digiseller-table-head td { background: #151b26; }
+}
+
+/* ---------- Optional: container queries (progressive) ---------- */
+/* Mark containers; modern browsers will use these, older will ignore */
+.digiseller-body main,
+.digiseller-body .digiseller-wrapper-product { container-type: inline-size; }
+
+@container (max-width: 600px) {
+  /* When a product card gets <600px wide, tighten internals */
+  .digiseller-body .digiseller-wrapper-product .digiseller-wrapper-img {
+    padding: var(--ds-space-2);
+  }
+  .digiseller-body .digiseller-description-category a {
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+}
+
+/* ---------- Small quality-of-life tweaks ---------- */
+.digiseller-body .digiseller-follow-wrapper {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  gap: var(--ds-space-2);
+}
+.digiseller-body .digiseller-sale-par { margin-bottom: var(--ds-space-2); }
+.digiseller-body .digiseller-name-product {
+  font-size: clamp(22px, 3vw, 30px);
+  margin-block: var(--ds-space-3);
+}
